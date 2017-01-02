@@ -49,34 +49,22 @@ namespace WebAppReactJS.Controllers
         [HttpGet]
         public JsonResult GetProducts()
         {
-            AddProducts();     
-            return Json(Products.Where(p=> p.Active == true), JsonRequestBehavior.AllowGet);
-                  
-        }
+            AddProducts();
+            return Json(Products.Where(p => p.Active == true), JsonRequestBehavior.AllowGet);
 
+        }
 
         private void AddProducts()
         {
-            //Products.RemoveAt(1);
             //System.Threading.Thread.Sleep(5000);
 
-            if (Products.Count(p => p.Id == 1) == 0)
-                Products.Add(new Product { Id = 1, Name = "Google Wifi system", Price = 299, Active = true });
-
-
-            if (Products.Count(p => p.Id == 2) == 0)
-                Products.Add(new Product { Id = 2, Name = "All-New Fire HD 8 Tablet", Price = 89.99M, Active = true });
-
-            if (Products.Count(p => p.Id == 3) == 0)
-                Products.Add(new Product { Id = 3, Name = "D-Link Wireless AC1900", Price = 109.76M, Active = true });
-
-
-            if (Products.Count(p => p.Id == 3) == 0)
+            if (Products.Count() == 0)
             {
+                Products.Add(new Product { Id = 1, Name = "Google Wifi system", Price = 299, Active = true });
+                Products.Add(new Product { Id = 2, Name = "All-New Fire HD 8 Tablet", Price = 89.99M, Active = true });
                 Products.Add(new Product { Id = 3, Name = "D-Link Wireless AC1900", Price = 109.76M, Active = true });
-                return;
             }
-
+                        
             if (Products.Count(p => p.Id == 4) == 0)
             {
                 Products.Add(new Product { Id = 4, Name = "Sades SA920 Wired Stereo", Price = 28.44M, Active = true });
@@ -123,8 +111,28 @@ namespace WebAppReactJS.Controllers
                 //change price
                 Products.First(p => p.Id == 10).Price = 9.99M;
             }
+        }
 
-            
+        [HttpGet]
+        public JsonResult GetOrders()
+        {
+            List<Order> orders = new List<Order>();
+
+            Order order = new Order { Id = 1, Number = "000001", State = OrderState.Cart, Date = DateTime.Now.AddDays(-10), CustomerAddress = "" };
+            order.Add(new Item { OrderId = order.Id, ItemId = 1, Product = new Product { Id = 10, Name = "Google Wifi system", Price = 30.83M }  });
+            order.Add(new Item { OrderId = order.Id, ItemId = 2, Product = new Product { Id = 20, Name = "Purina Beyond Dash Button", Price = 31.13M } });
+            order.Add(new Item { OrderId = order.Id, ItemId = 3, Product = new Product { Id = 30, Name = "Charmin Dash Button", Price = 98.99M } });
+            orders.Add(order);
+
+            Order order2 = new Order { Id = 2, Number = "000002", State = OrderState.Complete, Date = DateTime.Now.AddDays(-20), CustomerAddress = "" };
+            order2.Add(new Item { OrderId = order2.Id, ItemId = 1, Product = new Product { Id = 40, Name = "All-New Echo Dot", Price = 242.10M } });
+            orders.Add(order2);
+
+            Order order3 = new Order { Id = 3, Number = "000003", State = OrderState.Confirm, Date = DateTime.Now.AddDays(-5), CustomerAddress = "" };
+            order3.Add(new Item { OrderId = order3.Id, ItemId = 1, Product = new Product { Id = 50, Name = "All-New Fire HD 8 Tablet", Price = 89.99M } });
+            orders.Add(order3);
+
+            return Json(orders, JsonRequestBehavior.AllowGet);
         }
     }
 }
